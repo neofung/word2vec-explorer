@@ -20,8 +20,20 @@ class Exploration(dict):
 
     def cluster(self, n_clusters=30):
         clustering = KMeans(n_clusters=n_clusters)
-        clustering.fit(self.vectors)
+        clustering.fit(self.reduction)
         self.clusters = clustering.labels_
+        clustermatrix = []
+        reduction = self.reduction.tolist()
+        for cluster_id in range(n_clusters):
+            clustermatrix.append([reduction[i] for i in range(len(self.vectors)) if self.clusters[i] == cluster_id])
+        self.cluster_centroids = clustering.cluster_centers_.tolist()
+        self.cluster_centroids_closest_nodes = []
+        for cluster_id in range(n_clusters):
+            nodes_for_cluster = clustermatrix[cluster_id]
+            closest_node_to_centroid = self._closest_node(self.cluster_centroids[cluster_id], nodes_for_cluster)
+            coords = nodes_for_cluster[closest_node_to_centroid]
+            node_id = reduction.index(coords)
+            self.cluster_centroids_closest_nodes.append(node_id)
 
     def serialize(self):
         result = {
@@ -32,7 +44,14 @@ class Exploration(dict):
             result['reduction'] = self.reduction.tolist()
         if len(self.clusters) > 0:
             result['clusters'] = self.clusters.tolist()
+            result['cluster_centroids'] = self.cluster_centroids
+            result['cluster_centroids_closest_nodes'] = self.cluster_centroids_closest_nodes
         return result
+
+    def _closest_node(self, node, nodes):
+        nodes = np.asarray(nodes)
+        dist_2 = np.sum((nodes - node)**2, axis=1)
+        return np.argmin(dist_2)
 
 class Model(object):
 
