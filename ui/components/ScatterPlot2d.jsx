@@ -85,7 +85,7 @@ export default React.createClass({
          return yScale(d[1]);
      })
      .attr("fill", (d, i) => {
-       return colors(this.state.data.reduction[i])
+       return colors(this.state.data.clusters[i])
      })
      .attr("r", 2);  // radius
 
@@ -136,7 +136,7 @@ export default React.createClass({
              return yScale(d[1]);  // Circle's Y
          })
          .attr("fill", (d, i) => {
-           return colors(this.state.data.reduction[i])
+           return colors(this.state.data.clusters[i])
          })
 
        // Render new nodes
@@ -155,7 +155,7 @@ export default React.createClass({
          .each("end", function(d, i) {  // Start animation
            d3.select(this)
              .attr("fill", () => {
-               return colors(self.state.data.reduction[i])
+               return colors(self.state.data.clusters[i])
              })
          })
          .attr("cx", function(d) {
@@ -165,7 +165,7 @@ export default React.createClass({
            return yScale(d[1]);
          })
          .attr("fill", (d, i) => {
-           return colors(self.state.data.reduction[i])
+           return colors(self.state.data.clusters[i])
          })
          .attr("r", 2);  // Change size
 

@@ -2,6 +2,7 @@
 const React = require('react')
 const Api = require('./../utils/Api')
 const ScatterPlot2d = require('./ScatterPlot2d')
+const VectorList = require('./VectorList')
 
 export default React.createClass({
   getInitialState() {
@@ -19,14 +20,23 @@ export default React.createClass({
   },
   render() {
     let result = this.state.result
-    console.log('this.state.result', this.state.result)
     return (
       <div className="exploration">
         { (!result || this.state.loading) && (
           <div className="loader"><div className="spinner"></div></div>
         )}
         { (result) && (
-          <ScatterPlot2d ref="plot" data={result}></ScatterPlot2d>
+          <div className="row">
+            <div className="col-md-2 left-pane">
+              <VectorList title="Most Similar" data={result}></VectorList>
+            </div>
+            <div className="col-md-8 center-pane">
+              <ScatterPlot2d ref="plot" data={result}></ScatterPlot2d>
+            </div>
+            <div className="col-md-2 right-pane">
+              clusters
+            </div>
+          </div>
         )}
       </div>
     )
