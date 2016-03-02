@@ -28,7 +28,7 @@ export default React.createClass({
         { (result) && (
           <div className="row">
             <div className="col-md-2 left-pane">
-              <VectorList title="Most Similar" data={result}></VectorList>
+              <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
             </div>
             <div className="col-md-8 center-pane">
               <ScatterPlot2d ref="plot" data={result}></ScatterPlot2d>
@@ -49,8 +49,12 @@ export default React.createClass({
       limit: (params.limit || 1000)
     }, (error, result) => {
       this.refs.plot && this.refs.plot.setState({data: result})
+      this.refs.mostSimilarList && this.refs.mostSimilarList.setState({selected: null})
       let loading = false;
       this.setState({error, result, loading})
     })
+  },
+  _onDrillDown: function(params) {
+    this.props.onDrillOut(params);
   }
 });

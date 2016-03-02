@@ -29,7 +29,7 @@ export default React.createClass({
             </form>
           </div>
         </div>
-        <Exploration ref="exploration" params={this.state.params}></Exploration>
+        <Exploration ref="exploration" params={this.state.params} onDrillOut={this._onDrillOut}></Exploration>
       </div>
     )
   },
@@ -43,5 +43,10 @@ export default React.createClass({
     this.setState({params})
     this.refs.exploration.setState({params})
     this.refs.exploration.explore()
+  },
+  _onDrillOut(params) {
+    console.log('onDrillOut')
+    this.refs.queryInput.value = params.query
+    this._explore();
   }
 });
