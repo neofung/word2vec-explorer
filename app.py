@@ -17,16 +17,18 @@ class App(object):
 class Explore(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def index(self, query=None, limit=1000):
+    def index(self, query=None, limit='1000', enable_clustering='', num_clusters='30'):
         req = cherrypy.request
-        limit = int(limit)
-        cache_key = query + '-' + str(limit)
+        cache_key = '-'.join([query, limit, enable_clustering, num_clusters])
         result = CACHE.get(cache_key, {})
         if len(result) > 0:
             return {'result': CACHE[cache_key], 'cached': True}
-        exploration = self.model.explore(query, limit=limit)
+        exploration = self.model.explore(query, limit=int(limit))
         exploration.reduce()
-        exploration.cluster()
+        if len(enable_clustering):
+            if (len(num_clusters)):
+                num_clusters = int(num_clusters)
+            exploration.cluster(num_clusters=num_clusters)
         result = exploration.serialize()
         CACHE[cache_key] = result
         return {'result': result, 'cached': False}

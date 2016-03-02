@@ -7,7 +7,8 @@ export default React.createClass({
     return {
       params: {
         query: "buying|VERB",
-        limit: 2000
+        limit: 2000,
+        num_clusters: 30
       }
     }
   },
@@ -25,6 +26,10 @@ export default React.createClass({
                 <label htmlFor="limitInput">Num Vectors:</label>
                 <input id="limitInput" ref="limitInput" className="form-control" type="text" defaultValue={this.state.params.limit}></input>
               </div>
+              <div className="form-group">
+                <label htmlFor="limitInput">Num Clusters:</label>
+                <input id="numClustersInput" ref="numClustersInput" className="form-control" type="text" defaultValue={this.state.params.num_clusters}></input>
+              </div>
               <input type="submit" className="btn btn-primary" value="Explore"/>
             </form>
           </div>
@@ -37,9 +42,11 @@ export default React.createClass({
     e && e.preventDefault()
     var query = this.refs.queryInput.value
     var limit = parseInt(this.refs.limitInput.value, 10)
+    var numClusters = parseInt(this.refs.numClustersInput.value, 10)
     var params = this.state.params
     params.query = query
     params.limit = limit
+    params.num_clusters = numClusters
     this.setState({params})
     this.refs.exploration.setState({params})
     this.refs.exploration.explore()

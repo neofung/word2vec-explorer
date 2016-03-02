@@ -7,7 +7,6 @@ from sklearn.cluster import KMeans
 class Exploration(dict):
 
     def __init__(self, query, labels=[], vectors=[]):
-        print('new Exploration')
         self.query = query
         self.labels = labels
         self.vectors = vectors
@@ -15,20 +14,20 @@ class Exploration(dict):
         self.clusters = []
 
     def reduce(self):
-        print('reducing tSNE on {} vectors'.format(len(self.vectors)))
+        print('Performing tSNE reduction on {} vectors'.format(len(self.vectors)))
         self.reduction = bh_sne(np.array(self.vectors, dtype=np.float64))
 
-    def cluster(self, n_clusters=30):
-        clustering = KMeans(n_clusters=n_clusters)
+    def cluster(self, num_clusters=30):
+        clustering = KMeans(n_clusters=num_clusters)
         clustering.fit(self.reduction)
         self.clusters = clustering.labels_
         clustermatrix = []
         reduction = self.reduction.tolist()
-        for cluster_id in range(n_clusters):
+        for cluster_id in range(num_clusters):
             clustermatrix.append([reduction[i] for i in range(len(self.vectors)) if self.clusters[i] == cluster_id])
         self.cluster_centroids = clustering.cluster_centers_.tolist()
         self.cluster_centroids_closest_nodes = []
-        for cluster_id in range(n_clusters):
+        for cluster_id in range(num_clusters):
             nodes_for_cluster = clustermatrix[cluster_id]
             closest_node_to_centroid = self._closest_node(self.cluster_centroids[cluster_id], nodes_for_cluster)
             coords = nodes_for_cluster[closest_node_to_centroid]

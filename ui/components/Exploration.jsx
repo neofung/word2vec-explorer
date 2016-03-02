@@ -3,6 +3,8 @@ const React = require('react')
 const Api = require('./../utils/Api')
 const ScatterPlot2d = require('./ScatterPlot2d')
 const VectorList = require('./VectorList')
+const ClusterList = require('./ClusterList')
+const d3 = require('d3')
 
 export default React.createClass({
   getInitialState() {
@@ -10,7 +12,8 @@ export default React.createClass({
       params: this.props.params,
       loading: false,
       result: null,
-      error: null
+      error: null,
+      color: d3.scale.category20c()
     }
   },
   componentWillMount() {
@@ -31,10 +34,10 @@ export default React.createClass({
               <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
             </div>
             <div className="col-md-8 center-pane">
-              <ScatterPlot2d ref="plot" data={result}></ScatterPlot2d>
+              <ScatterPlot2d ref="plot" color={this.state.color} data={result}></ScatterPlot2d>
             </div>
             <div className="col-md-2 right-pane">
-              clusters
+              <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>
             </div>
           </div>
         )}
@@ -46,7 +49,9 @@ export default React.createClass({
     this.setState({loading: true})
     Api.request('GET', '/explore', {
       query: params.query,
-      limit: (params.limit || 1000)
+      limit: (params.limit || 1000),
+      enable_clustering: true,
+      num_clusters: params.num_clusters
     }, (error, result) => {
       this.refs.plot && this.refs.plot.setState({data: result})
       this.refs.mostSimilarList && this.refs.mostSimilarList.setState({selected: null})

@@ -30,7 +30,6 @@
 }
 
 
-
 @keyframes elastic-rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -60,7 +59,7 @@ body,
 
 .exploration .center-pane {
   height: 100%;
-  padding: 15px 0;
+  padding: 0;
 }
 .exploration .right-pane,
 .exploration .left-pane {
@@ -91,6 +90,16 @@ body,
 
 .exploration .info {
   width: 100%;
+}
+
+.exploration .list-group-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cluster-list .list-group-item .badge {
+  right: 6px;
+  position: absolute;
 }
 
 form label {

@@ -34,7 +34,7 @@ export default React.createClass({
     var canvas_width = $scatterPlot2dElement.width()
     var canvas_height = $scatterPlot2dElement.height()
     var padding = 30
-    var colors = d3.scale.category20c()
+    var colors = this.props.color
 
     console.log(`ScatterPlot2d canvas_width=${canvas_width}, canvas_height=${canvas_height}, dataset.length=${dataset.length}`)
 
@@ -45,7 +45,7 @@ export default React.createClass({
        }), d3.max(dataset, function(d) {
            return d[0];  // input domain
        })])
-       .range([padding, canvas_width - padding * 2]); // output range
+       .range([padding, canvas_width - padding]); // output range
 
     var yScale = d3.scale.linear()  // yScale is height of graphic
        .domain([d3.min(dataset, function(d) {
