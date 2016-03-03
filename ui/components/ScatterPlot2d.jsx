@@ -5,20 +5,45 @@ const d3 = require('d3')
 export default React.createClass({
   getInitialState: function() {
     return {
-      data: this.props.data
+      data: this.props.data,
+      viewOptions: {
+        showLabels: false
+      }
     }
   },
   componentDidMount() {
     this._renderD3()
   },
   componentWillUpdate() {
+    console.log('componentWillUpdate state', this.state.viewOptions)
     this._updateD3()
   },
   render() {
+    console.log('render state', this.state.viewOptions)
+    let viewOptions = this.state.viewOptions
+    let scatterClasses = 'scatter-plot-2d'
+    if (viewOptions.showLabels) scatterClasses += ' show-labels'
+    this._updateD3 && this._updateD3()
     return (
-      <div ref="scatterPlot2dElement" id="scatter-plot-2d" className="scatter-plot-2d full-height">
+      <div className="scatter-plot-2d-container">
+        <div className="view-options">
+          <div className="checkbox">
+            <label>
+              <input ref="showLabelsInput" type="checkbox" defaultValue="yes" checked={viewOptions.showLabels} onChange={this._setViewOptions} />
+              Show Labels
+            </label>
+          </div>
+        </div>
+        <div id="scatter-plot-2d" ref="scatterPlot2dElement" className={scatterClasses}>
+        </div>
       </div>
     )
+  },
+  _setViewOptions: function() {
+    var viewOptions = {
+      showLabels: this.refs.showLabelsInput.checked
+    }
+    this.setState({viewOptions: viewOptions})
   },
   _nodeRadius: function() {
     var nodeRadius = 2
@@ -99,15 +124,6 @@ export default React.createClass({
 
     var container = svg.append("g");
 
-    container.selectAll("circle")
-      .data(dataset)
-      .enter()
-      .append("circle")
-      .attr("cx", d => xScale(d[0]))
-      .attr("cy", d => yScale(d[1]))
-      .attr("fill", (d, i) => colors(this.state.data.clusters[i]))
-      .attr("r", this._nodeRadius());
-
     if (this.props.drawAxes) {
       container.append("g")
         .attr("class", "x axis")
@@ -121,9 +137,10 @@ export default React.createClass({
     }
 
     function update() {
-       var self = this;
-       var dataset = this.state.data.reduction
-       var numValues = dataset.length
+       let self = this;
+       let dataset = this.state.data.reduction
+       let numValues = dataset.length
+       let viewOptions = this.state.viewOptions
 
        console.log(`ScatterPlot2d update, dataset.length=${dataset.length}`)
 
@@ -131,7 +148,7 @@ export default React.createClass({
        yScale.domain([d3.min(dataset, d => d[1]), d3.max(dataset, d => d[1])])
 
        // Update data for existing nodes
-       var nodes = container.selectAll("circle")
+       var nodes = container.selectAll("circle.node")
          .data(dataset)
 
        // Change existing nodes
@@ -159,10 +176,27 @@ export default React.createClass({
            d3.select(this)
              .attr("fill", () => colors(self.state.data.clusters[i]))
          })
+         .attr("class", "node")
          .attr("cx", d => xScale(d[0]))
          .attr("cy", d => yScale(d[1]))
          .attr("fill", (d, i) => colors(this.state.data.clusters[i]))
-         .attr("r", this._nodeRadius());
+         .attr("r", this._nodeRadius())
+
+       if (viewOptions.showLabels) {
+         container.selectAll("text.node-label")
+           .data(dataset)
+           .enter()
+           .append("text")
+           .attr("class", "node-label")
+           .attr("text-anchor", "middle")
+           .attr("x", d => xScale(d[0]))
+           .attr("y", d => yScale(d[1]))
+           .attr("dy", 0 - this._nodeRadius() - 1.5)
+           .text((d, i) => this.state.data.labels[i])
+       } else {
+         container.selectAll("text.node-label")
+          .remove()
+       }
 
       // Remove old nodes
       nodes
@@ -182,6 +216,7 @@ export default React.createClass({
          .call(yAxis);
     };
 
-    this._updateD3 = update
+    this._updateD3 = update.bind(this)
+    this._updateD3()
   }
 });

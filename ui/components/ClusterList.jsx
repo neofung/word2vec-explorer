@@ -22,7 +22,7 @@ export default React.createClass({
       itemsHtml.push(<a className={className} key={i} onClick={this._onClick} data-index={i}><span className="badge" style={badgeStyle}>{numClusters}</span>{label}</a>)
     }
     return (
-      <div className="cluster-list panel panel-default full-height">
+      <div className="cluster-list panel panel-default">
         <div className="panel-heading">{this.props.title}</div>
         <div className="list-group">
           {itemsHtml}

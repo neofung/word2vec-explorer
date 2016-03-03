@@ -17,7 +17,7 @@ export default React.createClass({
       itemsHtml.push(<a href="#" className={className} key={i} onClick={this._onClick} data-index={i}>{labels[i]}</a>)
     }
     return (
-      <div className="vector-list panel panel-default full-height">
+      <div className="vector-list panel panel-default">
         <div className="panel-heading">{this.props.title}</div>
         <div className="list-group">
           {itemsHtml}
