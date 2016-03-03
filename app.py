@@ -35,8 +35,8 @@ class Explore(object):
             return {'result': result, 'cached': False}
         except KeyError:
             return {'error': {'message': 'No vector found for ' + query}}
-        except Error as e:
-            return {'error': {'message': 'Unknown fatal error happened: ' + str(e)}}
+        #except:
+        #    return {'error': {'message': 'Unknown fatal error happened'}}
 
 
 if __name__ == '__main__':

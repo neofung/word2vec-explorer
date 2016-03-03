@@ -14,6 +14,7 @@ class Exploration(dict):
         self.vectors = vectors
         self.reduction = []
         self.clusters = []
+        self.distances = []
 
     def reduce(self):
         print('Performing tSNE reduction on {} vectors'.format(len(self.vectors)))
@@ -43,6 +44,8 @@ class Exploration(dict):
         }
         if len(self.reduction) > 0:
             result['reduction'] = self.reduction.tolist()
+        if len(self.distances) > 0:
+            result['distances'] = self.distances
         if len(self.clusters) > 0:
             result['clusters'] = self.clusters.tolist()
             result['cluster_centroids'] = self.cluster_centroids
@@ -66,7 +69,7 @@ class Model(object):
         print('Model#explore query={}, limit={}'.format(query, limit))
         exploration = Exploration(query)
         if len(query):
-            exploration.labels, exploration.vectors = self._most_similar_vectors(query, limit)
+            exploration.labels, exploration.vectors, exploration.distances = self._most_similar_vectors(query, limit)
         else:
             exploration.labels, exploration.vectors = self._all_vectors(query, limit)
         return exploration
@@ -75,10 +78,12 @@ class Model(object):
         results = self.model.most_similar(query, topn=limit)
         labels = []
         vectors = []
-        for key, vector in results:
+        distances = []
+        for key, distance in results:
+            distances.append(distance)
             labels.append(key)
             vectors.append(self.model[key])
-        return labels, vectors
+        return labels, vectors, distances
 
     def _all_vectors(self, query, limit):
         sample = 1
