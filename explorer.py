@@ -1,6 +1,7 @@
 
 import math
 import gensim
+import cPickle
 import numpy as np
 from tsne import bh_sne
 from sklearn.cluster import KMeans
@@ -56,7 +57,10 @@ class Exploration(dict):
 class Model(object):
 
     def __init__(self, filename):
-        self.model = gensim.models.Word2Vec.load(filename)
+        try:
+            self.model = gensim.models.Word2Vec.load(filename)
+        except cPickle.UnpicklingError:
+            self.model = gensim.models.Word2Vec.load_word2vec_format(filename, binary=True)
 
     def explore(self, query, limit=1000):
         print('Model#explore query={}, limit={}'.format(query, limit))
