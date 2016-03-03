@@ -79,6 +79,10 @@ body,
   font-size: 11px;
 }
 
+.scatter-plot-2d circle {
+  opacity: 0.8;
+}
+
 .scatter-plot-2d {
   width: 100%;
   height: 100%;
