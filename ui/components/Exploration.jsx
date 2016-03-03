@@ -25,7 +25,10 @@ export default React.createClass({
     let result = this.state.result
     return (
       <div className="exploration">
-        { (!result || this.state.loading) && (
+        { (this.state.error) && (
+          <div className="alert alert-danger">{this.state.error.message}</div>
+        ) }
+        { (this.state.loading) && (
           <div className="loader"><div className="spinner"></div></div>
         )}
         { (result) && (
@@ -46,15 +49,17 @@ export default React.createClass({
   },
   explore: function() {
     let params = this.state.params
-    this.setState({loading: true})
+    this.setState({loading: true, error: null})
     Api.request('GET', '/explore', {
       query: params.query,
       limit: (params.limit || 1000),
       enable_clustering: true,
       num_clusters: params.num_clusters
     }, (error, result) => {
-      this.refs.plot && this.refs.plot.setState({data: result})
-      this.refs.mostSimilarList && this.refs.mostSimilarList.setState({selected: null})
+      if (result) {
+        this.refs.plot && this.refs.plot.setState({data: result})
+        this.refs.mostSimilarList && this.refs.mostSimilarList.setState({selected: null})
+      }
       let loading = false;
       this.setState({error, result, loading})
     })

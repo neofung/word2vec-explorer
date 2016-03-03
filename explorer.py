@@ -1,4 +1,5 @@
 
+import math
 import gensim
 import numpy as np
 from tsne import bh_sne
@@ -59,12 +60,32 @@ class Model(object):
 
     def explore(self, query, limit=1000):
         print('Model#explore query={}, limit={}'.format(query, limit))
-        results = self.model.most_similar(query, topn=limit)
-        print('Got {} results'.format(len(results)))
         exploration = Exploration(query)
-        exploration.labels = []
-        exploration.vectors = []
-        for key, vector in results:
-            exploration.labels.append(key)
-            exploration.vectors.append(self.model[key])
+        if len(query):
+            exploration.labels, exploration.vectors = self._most_similar_vectors(query, limit)
+        else:
+            exploration.labels, exploration.vectors = self._all_vectors(query, limit)
         return exploration
+
+    def _most_similar_vectors(self, query, limit):
+        results = self.model.most_similar(query, topn=limit)
+        labels = []
+        vectors = []
+        for key, vector in results:
+            labels.append(key)
+            vectors.append(self.model[key])
+        return labels, vectors
+
+    def _all_vectors(self, query, limit):
+        sample = 1
+        if limit > -1:
+            sample = int(math.ceil(len(self.model.vocab) / limit))
+        labels = []
+        vectors = []
+        i = 0
+        for word in self.model.vocab:
+            if (i % sample) == 0:
+                vectors.append(self.model[word])
+                labels.append(word)
+            i += 1
+        return labels, vectors

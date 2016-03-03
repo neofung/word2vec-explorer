@@ -57,6 +57,10 @@ body,
   margin-bottom: 0;
 }
 
+.exploration .alert {
+  margin-top: 30px;
+}
+
 .exploration .center-pane {
   height: 100%;
   padding: 0;

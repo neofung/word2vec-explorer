@@ -6,8 +6,8 @@ export default React.createClass({
   getInitialState() {
     return {
       params: {
-        query: "buying|VERB",
-        limit: 2000,
+        query: "",
+        limit: 1000,
         num_clusters: 30
       }
     }

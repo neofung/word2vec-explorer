@@ -23,15 +23,20 @@ class Explore(object):
         result = CACHE.get(cache_key, {})
         if len(result) > 0:
             return {'result': CACHE[cache_key], 'cached': True}
-        exploration = self.model.explore(query, limit=int(limit))
-        exploration.reduce()
-        if len(enable_clustering):
-            if (len(num_clusters)):
-                num_clusters = int(num_clusters)
-            exploration.cluster(num_clusters=num_clusters)
-        result = exploration.serialize()
-        CACHE[cache_key] = result
-        return {'result': result, 'cached': False}
+        try:
+            exploration = self.model.explore(query, limit=int(limit))
+            exploration.reduce()
+            if len(enable_clustering):
+                if (len(num_clusters)):
+                    num_clusters = int(num_clusters)
+                exploration.cluster(num_clusters=num_clusters)
+            result = exploration.serialize()
+            CACHE[cache_key] = result
+            return {'result': result, 'cached': False}
+        except KeyError:
+            return {'error': {'message': 'No vector found for ' + query}}
+        except Error as e:
+            return {'error': {'message': 'Unknown fatal error happened: ' + str(e)}}
 
 
 if __name__ == '__main__':
