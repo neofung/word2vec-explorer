@@ -7,7 +7,7 @@ export default React.createClass({
     return {
       params: {
         query: "beer",
-        limit: 50000,
+        limit: 10000,
         num_clusters: 30
       }
     }

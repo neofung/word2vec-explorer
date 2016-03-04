@@ -1,5 +1,6 @@
 
 const React = require('react')
+const d3 = require('d3')
 //const THREE = require('three')
 
 export default React.createClass({
@@ -44,8 +45,8 @@ export default React.createClass({
 		  scene, renderer, clock = new THREE.Clock(true),
 		  controls, container, options, spawnerOptions, particleSystem;
 
-    console.log('this', this.state)
     var dataset = this.state.data
+
 
   	init();
   	animate();
@@ -82,17 +83,34 @@ export default React.createClass({
   			sizeRandomness: 0
   		};
 
-      var expansion = 10000
+      var max = 10
+
+      var xScale = d3.scale.linear()
+        .domain([d3.min(dataset.reduction, d => d[0]), d3.max(dataset.reduction, d => d[0])])
+        .range([0, max]);
+
+      var yScale = d3.scale.linear()
+        .domain([d3.min(dataset.reduction, d => d[1]), d3.max(dataset.reduction, d => d[1])])
+        .range([0, max]);
+
+      var zScale = d3.scale.linear()
+        .domain([d3.min(dataset.reduction, d => d[2]), d3.max(dataset.reduction, d => d[2])])
+        .range([0, max]);
+
+      console.log('d3.min', d3.min(dataset.reduction, d => d[2]), d3.max(dataset.reduction, d => d[2]))
 
       for (var i=0; dataset.reduction.length>i; i++) {
         var point = dataset.reduction[i];
-        console.log('point', point)
         var baseOptions = JSON.parse(JSON.stringify(options))
         baseOptions.position = new THREE.Vector3()
         baseOptions.velocity = new THREE.Vector3()
-        baseOptions.position.x = point[0] * expansion
+        /*baseOptions.position.x = point[0] * expansion
         baseOptions.position.y = point[1] * expansion
-        baseOptions.position.z = point[2] * expansion
+        baseOptions.position.z = point[2] * expansion*/
+        baseOptions.position.x = xScale(point[0])
+        baseOptions.position.y = yScale(point[1])
+        baseOptions.position.z = zScale(point[2])
+        console.log('xyz', point[0], point[1], point[2], xScale(point[0]), yScale(point[1]), zScale(point[2]))
         //baseOptions.color = parseInt(color(dataset.clusters[i]), 16)
         //baseOptions.color = 0xffffff
         particleSystem.spawnParticle(baseOptions);

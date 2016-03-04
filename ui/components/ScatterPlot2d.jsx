@@ -15,11 +15,9 @@ export default React.createClass({
     this._renderD3()
   },
   componentWillUpdate() {
-    console.log('componentWillUpdate state', this.state.viewOptions)
     this._updateD3()
   },
   render() {
-    console.log('render state', this.state.viewOptions)
     let viewOptions = this.state.viewOptions
     let scatterClasses = 'scatter-plot-2d'
     if (viewOptions.showLabels) scatterClasses += ' show-labels'
