@@ -6,8 +6,8 @@ export default React.createClass({
   getInitialState() {
     return {
       params: {
-        query: "",
-        limit: 1000,
+        query: "beer",
+        limit: 50000,
         num_clusters: 30
       }
     }

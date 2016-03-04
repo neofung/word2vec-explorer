@@ -2,6 +2,7 @@
 const React = require('react')
 const Api = require('./../utils/Api')
 const ScatterPlot2d = require('./ScatterPlot2d')
+const ScatterPlot3d = require('./ScatterPlot3d')
 const VectorList = require('./VectorList')
 const ClusterList = require('./ClusterList')
 const d3 = require('d3')
@@ -37,7 +38,7 @@ export default React.createClass({
               <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
             </div>
             <div className="col-md-8 center-pane">
-              <ScatterPlot2d ref="plot" color={this.state.color} data={result}></ScatterPlot2d>
+              <ScatterPlot3d ref="plot" color={this.state.color} data={result}></ScatterPlot3d>
             </div>
             <div className="col-md-2 right-pane">
               <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>
@@ -54,7 +55,8 @@ export default React.createClass({
       query: params.query,
       limit: (params.limit || 1000),
       enable_clustering: true,
-      num_clusters: params.num_clusters
+      num_clusters: params.num_clusters,
+      dimensions: 3
     }, (error, result) => {
       if (result) {
         this.refs.plot && this.refs.plot.setState({data: result})

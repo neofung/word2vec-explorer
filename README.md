@@ -1,6 +1,7 @@
 
 # Todo
 
+- Fix label transition bug
 - Drill-down of vector that shows real distance between neighbors
 - Enable JS Lint
 - Add requirements.txt for pip

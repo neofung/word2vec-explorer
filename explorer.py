@@ -16,9 +16,9 @@ class Exploration(dict):
         self.clusters = []
         self.distances = []
 
-    def reduce(self):
-        print('Performing tSNE reduction on {} vectors'.format(len(self.vectors)))
-        self.reduction = bh_sne(np.array(self.vectors, dtype=np.float64))
+    def reduce(self, dimensions=2):
+        print('Performing tSNE reduction to {} dimensions on {} vectors'.format(dimensions, len(self.vectors)))
+        self.reduction = bh_sne(np.array(self.vectors, dtype=np.float64), d=dimensions)
 
     def cluster(self, num_clusters=30):
         clustering = KMeans(n_clusters=num_clusters)

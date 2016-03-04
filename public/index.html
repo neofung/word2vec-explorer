@@ -5,9 +5,51 @@
     <title>Word2Vec Explorer</title>
     <link rel="stylesheet" href="/styles/bootstrap/bootstrap.css" />
     <link rel="stylesheet" href="/styles/app.css?v=1">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   </head>
   <body>
     <div id="main" class="container-fluid app-container"></div>
     <script src="/js/core.js?v=1"></script>
+    <script src="/js/three.min.js?v=1"></script>
+    <script src="/js/GPUParticleSystem.js?v=1"></script>
+    <script src="/js/TrackballControls.js?v=1"></script>
+    <script type="x-shader/x-vertex" id="vertexshader">
+
+    	attribute float size;
+    	attribute vec3 customColor;
+
+    	varying vec3 vColor;
+
+    	void main() {
+
+    		vColor = customColor;
+
+    		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+    		gl_PointSize = size * ( 300.0 / -mvPosition.z );
+
+    		gl_Position = projectionMatrix * mvPosition;
+
+    	}
+
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentshader">
+
+    	uniform vec3 color;
+    	uniform sampler2D texture;
+
+    	varying vec3 vColor;
+
+    	void main() {
+
+    		gl_FragColor = vec4( color * vColor, 1.0 );
+
+    		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+
+    		if ( gl_FragColor.a < ALPHATEST ) discard;
+
+    	}
+
+    </script>
   </body>
 </html>

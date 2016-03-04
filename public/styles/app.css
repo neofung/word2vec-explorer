@@ -73,12 +73,15 @@ body,
 }
 
 .scatter-plot-2d-container,
-.scatter-plot-2d {
+.scatter-plot-2d,
+.scatter-plot-3d-container,
+.scatter-plot-3d {
   width: 100%;
   height: 100%;
 }
 
-.scatter-plot-2d-container .view-options {
+.scatter-plot-2d-container .view-options,
+.scatter-plot-3d-container .view-options {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -101,6 +104,11 @@ body,
 
 .scatter-plot-2d text.node-label {
   font-size: 1px;
+}
+
+.scatter-plot-3d canvas {
+  width: 100%;
+  height: 100%;
 }
 
 .exploration {
