@@ -7,7 +7,7 @@ export default React.createClass({
     return {
       data: this.props.data,
       viewOptions: {
-        showLabels: false
+        showLabels: true
       }
     }
   },
@@ -15,11 +15,9 @@ export default React.createClass({
     this._renderD3()
   },
   componentWillUpdate() {
-    console.log('componentWillUpdate state', this.state.viewOptions)
     this._updateD3()
   },
   render() {
-    console.log('render state', this.state.viewOptions)
     let viewOptions = this.state.viewOptions
     let scatterClasses = 'scatter-plot-2d'
     if (viewOptions.showLabels) scatterClasses += ' show-labels'
@@ -182,9 +180,20 @@ export default React.createClass({
          .attr("fill", (d, i) => colors(this.state.data.clusters[i]))
          .attr("r", this._nodeRadius())
 
+       console.log('viewOptions', viewOptions)
+
        if (viewOptions.showLabels) {
-         container.selectAll("text.node-label")
+         var labelNodes = container.selectAll("text.node-label")
            .data(dataset)
+
+         labelNodes
+           .transition()
+           .duration(1000)
+           .delay((d, i) => i / dataset.length * 500)
+           .attr("x", d => xScale(d[0]))
+           .attr("y", d => yScale(d[1]))
+
+         labelNodes
            .enter()
            .append("text")
            .attr("class", "node-label")
@@ -193,6 +202,10 @@ export default React.createClass({
            .attr("y", d => yScale(d[1]))
            .attr("dy", 0 - this._nodeRadius() - 1.5)
            .text((d, i) => this.state.data.labels[i])
+
+         labelNodes
+           .exit()
+           .remove()
        } else {
          container.selectAll("text.node-label")
           .remove()
