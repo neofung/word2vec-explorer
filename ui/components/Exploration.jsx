@@ -5,6 +5,7 @@ const ScatterPlot2d = require('./ScatterPlot2d')
 const VectorList = require('./VectorList')
 const ClusterList = require('./ClusterList')
 const Stats = require('./Stats')
+const DrillDown = require('./DrillDown')
 const d3 = require('d3')
 
 export default React.createClass({
@@ -42,6 +43,9 @@ export default React.createClass({
                 <Stats data={result.stats}></Stats>
               ) }
               <ScatterPlot2d ref="plot" color={this.state.color} data={result}></ScatterPlot2d>
+              { (this.state.drillDownQuery) && (
+                <DrillDown query={this.state.drillDownQuery} onClose={this._onCloseDrillDown}></DrillDown>
+              ) }
             </div>
             <div className="col-md-2 right-pane">
               <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>
@@ -68,7 +72,14 @@ export default React.createClass({
       this.setState({error, result, loading})
     })
   },
+  drillDown: function(query) {
+    this.setState({drillDownQuery: query})
+  },
   _onDrillDown: function(params) {
+    //this.drillDown(params.query)
     this.props.onDrillOut(params);
+  },
+  _onCloseDrillDown: function() {
+    this.setState({drillDownQuery: null})
   }
 });
