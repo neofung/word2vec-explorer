@@ -4,6 +4,7 @@ const Api = require('./../utils/Api')
 const ScatterPlot2d = require('./ScatterPlot2d')
 const VectorList = require('./VectorList')
 const ClusterList = require('./ClusterList')
+const Stats = require('./Stats')
 const d3 = require('d3')
 
 export default React.createClass({
@@ -37,6 +38,9 @@ export default React.createClass({
               <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
             </div>
             <div className="col-md-8 center-pane">
+              { (result) && (result.stats) && (
+                <Stats data={result.stats}></Stats>
+              ) }
               <ScatterPlot2d ref="plot" color={this.state.color} data={result}></ScatterPlot2d>
             </div>
             <div className="col-md-2 right-pane">

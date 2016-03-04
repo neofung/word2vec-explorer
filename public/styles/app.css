@@ -61,6 +61,13 @@ body,
   margin-top: 30px;
 }
 
+.exploration .stats {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 10px;
+}
+
 .exploration .center-pane {
   height: 100%;
   padding: 0;

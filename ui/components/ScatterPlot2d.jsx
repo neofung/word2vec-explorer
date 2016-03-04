@@ -180,8 +180,6 @@ export default React.createClass({
          .attr("fill", (d, i) => colors(this.state.data.clusters[i]))
          .attr("r", this._nodeRadius())
 
-       console.log('viewOptions', viewOptions)
-
        if (viewOptions.showLabels) {
          var labelNodes = container.selectAll("text.node-label")
            .data(dataset)

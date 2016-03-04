@@ -90,6 +90,7 @@ class Model(object):
             exploration.labels, exploration.vectors, sample_rate = self._all_vectors(query, limit)
             exploration.stats['sample_rate'] = sample_rate
         exploration.stats['vocab_size'] = len(self.model.vocab)
+        exploration.stats['num_vectors'] = len(exploration.vectors)
         return exploration
 
     def _most_similar_vectors(self, query, limit):
