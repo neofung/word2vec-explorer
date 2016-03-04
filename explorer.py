@@ -15,6 +15,7 @@ class Exploration(dict):
         self.reduction = []
         self.clusters = []
         self.distances = []
+        self.stats = {}
 
     def reduce(self):
         print('Performing tSNE reduction on {} vectors'.format(len(self.vectors)))
@@ -40,7 +41,8 @@ class Exploration(dict):
     def serialize(self):
         result = {
             'query': self.query,
-            'labels': self.labels
+            'labels': self.labels,
+            'stats': self.stats
         }
         if len(self.reduction) > 0:
             result['reduction'] = self.reduction.tolist()
@@ -65,13 +67,29 @@ class Model(object):
         except cPickle.UnpicklingError:
             self.model = gensim.models.Word2Vec.load_word2vec_format(filename, binary=True)
 
+
+    def autocomplete(self, query, limit):
+        words = []
+        i = 0
+        print('autocomplete', query)
+        for word in self.model.vocab:
+            if word.startswith(query):
+                words.append({'word': word, 'count': self.model.vocab[word].count})
+                i += 1
+
+        words = sorted(words, key=lambda x: x['count'], reverse=True)
+        return words[0:limit]
+
+
     def explore(self, query, limit=1000):
         print('Model#explore query={}, limit={}'.format(query, limit))
         exploration = Exploration(query)
         if len(query):
             exploration.labels, exploration.vectors, exploration.distances = self._most_similar_vectors(query, limit)
         else:
-            exploration.labels, exploration.vectors = self._all_vectors(query, limit)
+            exploration.labels, exploration.vectors, sample_rate = self._all_vectors(query, limit)
+            exploration.stats['sample_rate'] = sample_rate
+        exploration.stats['vocab_size'] = len(self.model.vocab)
         return exploration
 
     def _most_similar_vectors(self, query, limit):
@@ -89,6 +107,7 @@ class Model(object):
         sample = 1
         if limit > -1:
             sample = int(math.ceil(len(self.model.vocab) / limit))
+        sample_rate = float(limit) / len(self.model.vocab)
         labels = []
         vectors = []
         i = 0
@@ -97,4 +116,4 @@ class Model(object):
                 vectors.append(self.model[word])
                 labels.append(word)
             i += 1
-        return labels, vectors
+        return labels, vectors, sample_rate
