@@ -7,7 +7,7 @@ export default React.createClass({
     return {
       data: this.props.data,
       viewOptions: {
-        showLabels: true
+        showLabels: false
       }
     }
   },
