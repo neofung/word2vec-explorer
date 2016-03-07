@@ -13,7 +13,6 @@ class App(object):
     def index(self):
         return serve_file(STATIC_DIR + '/index.html', "text/html")
 
-
 class Explore(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -35,6 +34,16 @@ class Explore(object):
         except KeyError:
             return {'error': {'message': 'No vector found for ' + query}}
 
+class Compare(object):
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def index(self, query=None, limit='100'):
+        try:
+            result = self.model.compare(query, limit=int(limit))
+            return {'result': result}
+        except KeyError:
+            return {'error': {'message': 'No vector found for ' + query}}
+
 class Autocomplete(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -48,6 +57,8 @@ if __name__ == '__main__':
     app.model = Model(sys.argv[1])
     app.explore = Explore()
     app.explore.model = app.model
+    app.compare = Compare()
+    app.compare.model = app.model
     app.autocomplete = Autocomplete()
     app.autocomplete.model = app.model
     cherrypy.quickstart(app, '/', {'/': {'tools.staticdir.on': True, 'tools.staticdir.dir': STATIC_DIR}})

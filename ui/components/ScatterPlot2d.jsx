@@ -5,9 +5,11 @@ const d3 = require('d3')
 export default React.createClass({
   getInitialState: function() {
     return {
-      data: this.props.data,
+      points: this.props.points,
+      clusters: this.props.clusters,
+      labels: this.props.labels,
       viewOptions: {
-        showLabels: false
+        showLabels: this.props.showLabels || false
       }
     }
   },
@@ -45,19 +47,22 @@ export default React.createClass({
   },
   _nodeRadius: function() {
     var nodeRadius = 2
-    if (this.state.data.reduction.length > 5000) nodeRadius = 1
-    if (this.state.data.reduction.length < 500) nodeRadius = 3
-    if (this.state.data.reduction.length < 50) nodeRadius = 4
+    if (this.state.points.length > 5000) nodeRadius = 1
+    if (this.state.points.length < 500) nodeRadius = 3
+    if (this.state.points.length < 50) nodeRadius = 4
     return nodeRadius
   },
   _renderD3() {
-    var dataset = this.state.data.reduction
+    var dataset = this.state.points
 
-    var colors = this.props.color
+    var colors = this.props.color || d3.scale.category20c()
     var $scatterPlot2dElement = $(this.refs.scatterPlot2dElement)
     var width = $scatterPlot2dElement.width()
     var height = $scatterPlot2dElement.height()
     var padding = 30
+    var labelNodes = null
+    var nominalNodeLabelTextSize = 10
+    var maxNodeLabelTextSize = 20
 
     console.log(`ScatterPlot2d width=${width}, height=${height}, dataset.length=${dataset.length}`)
 
@@ -73,6 +78,12 @@ export default React.createClass({
 
     function zoomed() {
       container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      if (labelNodes) {
+        var labelTextSize = nominalNodeLabelTextSize;
+        if (nominalNodeLabelTextSize*zoom.scale()>maxNodeLabelTextSize) labelTextSize = maxNodeLabelTextSize/zoom.scale();
+        console.log("Setting labelTextSize (onZoom)", labelTextSize)
+        labelNodes.style("font-size", labelTextSize + "px");
+      }
     }
 
     function dragstarted(d) {
@@ -106,7 +117,7 @@ export default React.createClass({
       .orient("left")
       .ticks(5);
 
-    var svg = d3.select("#scatter-plot-2d")
+    var svg = d3.select(this.refs.scatterPlot2dElement)
       .append("svg")
       .attr("width", width)
       .attr("height", height)
@@ -122,21 +133,41 @@ export default React.createClass({
 
     var container = svg.append("g");
 
-    if (this.props.drawAxes) {
+    if (this.props && this.props.axes && this.props.axes.length) {
+
+      console.log("Drawing axes labels")
+
       container.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (height - padding) +")")
-        .call(xAxis);
+        .call(xAxis)
+        .append("text")
+          .attr("class", "axis-label")
+          .attr("x", width - padding)
+          .attr("y", -6)
+          .style("text-anchor", "end")
+          .text(this.props.axes[0]);
 
       container.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + padding +",0)")
-        .call(yAxis);
+        .call(yAxis)
+        .append("text")
+          .attr("class", "axis-label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("x", 0 - padding)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text(this.props.axes[1]);
     }
+
 
     function update() {
        let self = this;
-       let dataset = this.state.data.reduction
+       let dataset = this.state.points
+       let clusters = this.state.clusters
+       let labels = this.state.labels
        let numValues = dataset.length
        let viewOptions = this.state.viewOptions
 
@@ -156,7 +187,7 @@ export default React.createClass({
          .delay((d, i) => i / dataset.length * 500)
          .attr("cx", d => xScale(d[0]))
          .attr("cy", d => yScale(d[1]))
-         .attr("fill", (d, i) => colors(this.state.data.clusters[i]))
+         .attr("fill", (d, i) => colors(clusters ? clusters[i] : 0))
          .attr("r", this._nodeRadius());
 
        // Render new nodes
@@ -172,17 +203,22 @@ export default React.createClass({
          })
          .each("end", function(d, i) {
            d3.select(this)
-             .attr("fill", () => colors(self.state.data.clusters[i]))
+             .attr("fill", () => colors(clusters ? clusters[i] : 0))
          })
          .attr("class", "node")
          .attr("cx", d => xScale(d[0]))
          .attr("cy", d => yScale(d[1]))
-         .attr("fill", (d, i) => colors(this.state.data.clusters[i]))
+         .attr("fill", (d, i) => colors(clusters ? clusters[i] : 0))
          .attr("r", this._nodeRadius())
 
        if (viewOptions.showLabels) {
-         var labelNodes = container.selectAll("text.node-label")
+         labelNodes = container.selectAll("text.node-label")
            .data(dataset)
+
+         var labelTextSize = nominalNodeLabelTextSize;
+         if (nominalNodeLabelTextSize*zoom.scale()>maxNodeLabelTextSize) labelTextSize = maxNodeLabelTextSize/zoom.scale();
+         console.log("Setting labelTextSize", labelTextSize)
+         labelNodes.style("font-size", labelTextSize + "px");
 
          labelNodes
            .transition()
@@ -199,7 +235,8 @@ export default React.createClass({
            .attr("x", d => xScale(d[0]))
            .attr("y", d => yScale(d[1]))
            .attr("dy", 0 - this._nodeRadius() - 1.5)
-           .text((d, i) => this.state.data.labels[i])
+           .style("font-size", labelTextSize + "px")
+           .text((d, i) => labels[i])
 
          labelNodes
            .exit()

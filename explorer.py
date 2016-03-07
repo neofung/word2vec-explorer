@@ -10,6 +10,7 @@ class Exploration(dict):
 
     def __init__(self, query, labels=[], vectors=[]):
         self.query = query
+        self.parsed_query = {}
         self.labels = labels
         self.vectors = vectors
         self.reduction = []
@@ -41,6 +42,7 @@ class Exploration(dict):
     def serialize(self):
         result = {
             'query': self.query,
+            'parsed_query': self.parsed_query,
             'labels': self.labels,
             'stats': self.stats
         }
@@ -71,7 +73,6 @@ class Model(object):
     def autocomplete(self, query, limit):
         words = []
         i = 0
-        print('autocomplete', query)
         for word in self.model.vocab:
             if word.startswith(query):
                 words.append({'word': word, 'count': self.model.vocab[word].count})
@@ -81,20 +82,44 @@ class Model(object):
         return words[0:limit]
 
 
+    def compare(self, query, limit):
+        positive, negative = self._parse_query(query)
+        all_words = []
+        for word in positive:
+            words, vectors, distances = self._most_similar_vectors([word], [], limit)
+            all_words += words
+
+        matrix = []
+        labels = []
+        for word in all_words:
+            coordinates = []
+            for word2 in positive:
+                distance = self.model.n_similarity([word2], [word])
+                coordinates.append(distance)
+            matrix.append(coordinates)
+            labels.append(word)
+
+        return {'labels': labels, 'comparison': matrix}
+
+
     def explore(self, query, limit=1000):
         print('Model#explore query={}, limit={}'.format(query, limit))
         exploration = Exploration(query)
         if len(query):
-            exploration.labels, exploration.vectors, exploration.distances = self._most_similar_vectors(query, limit)
+            positive, negative = self._parse_query(query)
+            exploration.parsed_query['positive'] = positive
+            exploration.parsed_query['negative'] = negative
+            exploration.labels, exploration.vectors, exploration.distances = self._most_similar_vectors(positive, negative, limit)
         else:
-            exploration.labels, exploration.vectors, sample_rate = self._all_vectors(query, limit)
+            exploration.labels, exploration.vectors, sample_rate = self._all_vectors(limit)
             exploration.stats['sample_rate'] = sample_rate
         exploration.stats['vocab_size'] = len(self.model.vocab)
         exploration.stats['num_vectors'] = len(exploration.vectors)
         return exploration
 
-    def _most_similar_vectors(self, query, limit):
-        results = self.model.most_similar(query, topn=limit)
+    def _most_similar_vectors(self, positive, negative, limit):
+        print('Model#_most_similar_vectors positive={}, negative={}, limit={}'.format(positive, negative, limit))
+        results = self.model.most_similar(positive=positive, negative=negative, topn=limit)
         labels = []
         vectors = []
         distances = []
@@ -104,11 +129,23 @@ class Model(object):
             vectors.append(self.model[key])
         return labels, vectors, distances
 
-    def _all_vectors(self, query, limit):
+    def _parse_query(self, query):
+        expressions = query.split(' AND ')
+        positive = []
+        negative = []
+        for expression in expressions:
+            if expression.startswith('NOT '):
+                negative.append(expression[4:])
+            else:
+                positive.append(expression)
+        return positive, negative
+
+    def _all_vectors(self, limit):
         sample = 1
         if limit > -1:
             sample = int(math.ceil(len(self.model.vocab) / limit))
         sample_rate = float(limit) / len(self.model.vocab)
+        print('Model#_most_similar_vectors sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit))
         labels = []
         vectors = []
         i = 0

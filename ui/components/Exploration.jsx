@@ -41,7 +41,7 @@ export default React.createClass({
               { (result) && (result.stats) && (
                 <Stats data={result.stats}></Stats>
               ) }
-              <ScatterPlot2d ref="plot" color={this.state.color} data={result}></ScatterPlot2d>
+              <ScatterPlot2d ref="plot" color={this.state.color} points={result.reduction} clusters={result.clusters} labels={result.labels}></ScatterPlot2d>
             </div>
             <div className="col-md-2 right-pane">
               <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>

@@ -98,8 +98,10 @@ body,
   shape-rendering: crispEdges;
 }
 
-.scatter-plot-2d .axis text {
-  font-size: 11px;
+.scatter-plot-2d .axis-label {
+  font-size: 14px;
+  fill: black;
+  stroke: none;
 }
 
 .scatter-plot-2d circle {
@@ -107,7 +109,6 @@ body,
 }
 
 .scatter-plot-2d text.node-label {
-  font-size: 1px;
 }
 
 .exploration {
@@ -128,10 +129,18 @@ body,
   position: absolute;
 }
 
+.comparison .modal-body {
+  height: 570px;
+}
+
 form label {
   margin-right: 5px;
 }
 
 form .form-group {
+  margin-right: 5px;
+}
+
+form .btn {
   margin-right: 5px;
 }
