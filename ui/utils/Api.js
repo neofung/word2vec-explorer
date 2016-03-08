@@ -3,7 +3,7 @@ class Api {
 
   constructor(options) {
     if (!options) options = {}
-    this.baseUrl = options.baseUrl || `${document.location.protocol}//${document.location.host}`
+    this.baseUrl = options.baseUrl || `${document.location.protocol}//${document.location.host}/api`
   }
 
   request(method, path, params, options, callback) {

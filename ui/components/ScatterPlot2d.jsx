@@ -59,7 +59,7 @@ export default React.createClass({
     var $scatterPlot2dElement = $(this.refs.scatterPlot2dElement)
     var width = $scatterPlot2dElement.width()
     var height = $scatterPlot2dElement.height()
-    var padding = 30
+    var padding = 20
     var labelNodes = null
     var nominalNodeLabelTextSize = 10
     var maxNodeLabelTextSize = 20
@@ -122,7 +122,7 @@ export default React.createClass({
       .attr("width", width)
       .attr("height", height)
       .append("g")
-      .attr("transform", "translate(" + padding + "," + padding + ")")
+      .attr("transform", "translate(" + 0 + "," + 0 + ")")
       .call(zoom);
 
     var backdrop = svg.append("rect")

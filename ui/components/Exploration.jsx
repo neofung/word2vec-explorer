@@ -33,10 +33,7 @@ export default React.createClass({
           <div className="loader"><div className="spinner"></div></div>
         )}
         { (result) && (
-          <div className="row">
-            <div className="col-md-2 left-pane">
-              <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
-            </div>
+          <div className="result">
             <div className="col-md-8 center-pane">
               { (result) && (result.stats) && (
                 <Stats data={result.stats}></Stats>
@@ -44,7 +41,12 @@ export default React.createClass({
               <ScatterPlot2d ref="plot" color={this.state.color} points={result.reduction} clusters={result.clusters} labels={result.labels}></ScatterPlot2d>
             </div>
             <div className="col-md-2 right-pane">
-              <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>
+              <div className="split-pane upper">
+                <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
+              </div>
+              <div className="split-pane lower">
+                <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>
+              </div>
             </div>
           </div>
         )}

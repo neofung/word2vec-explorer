@@ -35,26 +35,39 @@
   to { transform: rotate(360deg); }
 }
 
-.app-container {
-  padding: 15px;
-}
-
 body,
 .app-container,
-.app {
-  height: 100vh;
-  position: relative;
+.app,
+.exploration,
+.result,
+.center-pane,
+.right-pane {
+  height: calc(100vh - 60px);
+}
+
+body {
   overflow: hidden;
 }
 
-.app-container .row {
+.center-pane {
   height: 100%;
+  padding: 0;
+}
+.left-pane {
+  position: relative;
 }
 
-.filters {
-  height: 65px;
-  width: 100%;
-  margin-bottom: 0;
+.split-pane {
+  height: 49%;
+  overflow-y: scroll;
+}
+
+.split-pane.upper {
+  margin-bottom: 2%;
+}
+
+.app-view-container {
+  margin-top: 60px;
 }
 
 .exploration .alert {
@@ -68,17 +81,6 @@ body,
   font-size: 10px;
 }
 
-.exploration .center-pane {
-  height: 100%;
-  padding: 0;
-}
-.exploration .right-pane,
-.exploration .left-pane {
-  height: 100%;
-  overflow-y: auto;
-  padding: 15px 15px 15px 15px;
-}
-
 .scatter-plot-2d-container,
 .scatter-plot-2d {
   width: 100%;
@@ -87,8 +89,8 @@ body,
 
 .scatter-plot-2d-container .view-options {
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 0;
+  top: 0;
 }
 
 .scatter-plot-2d .axis path,
@@ -111,10 +113,6 @@ body,
 .scatter-plot-2d text.node-label {
 }
 
-.exploration {
-  height: calc(100% - 100px);
-}
-
 .exploration .info {
   width: 100%;
 }
@@ -129,18 +127,6 @@ body,
   position: absolute;
 }
 
-.comparison .modal-body {
-  height: 570px;
-}
-
-form label {
-  margin-right: 5px;
-}
-
-form .form-group {
-  margin-right: 5px;
-}
-
-form .btn {
-  margin-right: 5px;
+.comparison {
+  padding: 10px;
 }

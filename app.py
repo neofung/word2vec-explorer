@@ -8,15 +8,10 @@ from explorer import Model
 STATIC_DIR = os.path.dirname(os.path.realpath(__file__)) + '/public'
 CACHE = {}
 
-class App(object):
-    @cherrypy.expose
-    def index(self):
-        return serve_file(STATIC_DIR + '/index.html', "text/html")
-
-class Explore(object):
+class ApiController(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def index(self, query=None, limit='1000', enable_clustering='', num_clusters='30'):
+    def explore(self, query=None, limit='1000', enable_clustering='', num_clusters='30'):
         cache_key = '-'.join([query, limit, enable_clustering, num_clusters])
         result = CACHE.get(cache_key, {})
         if len(result) > 0:
@@ -34,31 +29,45 @@ class Explore(object):
         except KeyError:
             return {'error': {'message': 'No vector found for ' + query}}
 
-class Compare(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def index(self, query=None, limit='100'):
+    def compare(self, **kw):
+        limit = kw.pop('limit', '100')
+        queries = kw.pop('queries[]', [])
         try:
-            result = self.model.compare(query, limit=int(limit))
+            result = self.model.compare(queries, limit=int(limit))
+            print('result', result)
             return {'result': result}
         except KeyError:
             return {'error': {'message': 'No vector found for ' + query}}
 
-class Autocomplete(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def index(self, query=None, limit='20'):
+    def autocomplete(self, query=None, limit='20'):
         result = self.model.autocomplete(query, limit=int(limit))
         return {'result': result}
 
+class AppController(object):
+    @cherrypy.expose
+    def index(self):
+        return serve_file(STATIC_DIR + '/index.html', "text/html")
+    def view(self, id):
+        return serve_file(STATIC_DIR + '/index.html', "text/html")
+
 if __name__ == '__main__':
-    #cherrypy.config.update({'/': {'tools.staticdir.on': True, 'tools.staticdir.dir': STATIC_DIR}})
-    app = App()
-    app.model = Model(sys.argv[1])
-    app.explore = Explore()
-    app.explore.model = app.model
-    app.compare = Compare()
-    app.compare.model = app.model
-    app.autocomplete = Autocomplete()
-    app.autocomplete.model = app.model
-    cherrypy.quickstart(app, '/', {'/': {'tools.staticdir.on': True, 'tools.staticdir.dir': STATIC_DIR}})
+    api_controller = ApiController()
+    api_controller.model = Model(sys.argv[1])
+    app_controller = AppController()
+    dispatch = cherrypy.dispatch.RoutesDispatcher()
+    dispatch.connect('api', '/api/:action', controller=api_controller)
+    dispatch.connect('app', '/:id', controller=app_controller, action="view")
+    dispatch.connect('app', '/', controller=app_controller, action="index")
+    app = cherrypy.tree.mount(None, config={
+            '/': {
+                'request.dispatch': dispatch,
+                'tools.staticdir.on': True,
+                'tools.staticdir.dir': STATIC_DIR
+            }
+        })
+    cherrypy.quickstart(app)
+    #cherrypy.quickstart(app, '/', {'/': {'tools.staticdir.on': True, 'tools.staticdir.dir': STATIC_DIR}})

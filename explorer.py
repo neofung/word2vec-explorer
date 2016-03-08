@@ -82,18 +82,20 @@ class Model(object):
         return words[0:limit]
 
 
-    def compare(self, query, limit):
-        positive, negative = self._parse_query(query)
+    def compare(self, queries, limit):
         all_words = []
-        for word in positive:
-            words, vectors, distances = self._most_similar_vectors([word], [], limit)
+        comparison_words = []
+        for query in queries:
+            positive, negative = self._parse_query(query)
+            comparison_words.append(positive[0])
+            words, vectors, distances = self._most_similar_vectors(positive, negative, limit)
             all_words += words
 
         matrix = []
         labels = []
         for word in all_words:
             coordinates = []
-            for word2 in positive:
+            for word2 in comparison_words:
                 distance = self.model.n_similarity([word2], [word])
                 coordinates.append(distance)
             matrix.append(coordinates)

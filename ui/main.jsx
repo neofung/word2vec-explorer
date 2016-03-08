@@ -10,11 +10,18 @@ import { createHistory } from 'history';
 
 let history = createHistory();
 
-var App = require('./components/App');
+const App = require('./components/App');
+const ExploreSection = require('./components/ExploreSection')
+const CompareSection = require('./components/CompareSection')
+
+const DefaultRoute = Router.DefaultRoute
 
 ReactDOM.render(
   <Router history={history}>
-    <Route path="/" component={App}>
+    <Route component={App}>
+      <Route path="/" component={ExploreSection} />
+      <Route path="/explore" component={ExploreSection} />
+      <Route path="/compare" component={CompareSection} />
     </Route>
   </Router>,
   document.getElementById('main')
