@@ -18,7 +18,6 @@ export default React.createClass({
     $('.navbar-nav li.explore').addClass('active')
   },
   render() {
-    console.log('this.props.params.query', this.props.params.query)
     return (
       <div className="row">
         <div className="query-column col-md-2">

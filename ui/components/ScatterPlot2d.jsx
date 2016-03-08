@@ -9,7 +9,7 @@ export default React.createClass({
       clusters: this.props.clusters,
       labels: this.props.labels,
       viewOptions: {
-        showLabels: this.props.showLabels || false
+        showLabels: this.props.showLabels || true
       }
     }
   },
@@ -45,15 +45,28 @@ export default React.createClass({
     }
     this.setState({viewOptions: viewOptions})
   },
-  _nodeRadius: function() {
+  _nodeRadius() {
     var nodeRadius = 2
     if (this.state.points.length > 5000) nodeRadius = 1
     if (this.state.points.length < 500) nodeRadius = 3
     if (this.state.points.length < 50) nodeRadius = 4
     return nodeRadius
   },
+  _maxLabelTextSize() {
+    return 20
+  },
+  _nominalNodeLabelTextSize() {
+    var size = 10
+    if (this.state.points.length >= 10000) size = 1
+    if (this.state.points.length >= 1000) size = 2
+    if (this.state.points.length >= 500) size = 5
+    if (this.state.points.length <= 500) size = 15
+    if (this.state.points.length <= 50) size = 20
+    return size
+  },
   _renderD3() {
     var dataset = this.state.points
+    var self = this
 
     var colors = this.props.color || d3.scale.category20c()
     var $scatterPlot2dElement = $(this.refs.scatterPlot2dElement)
@@ -61,8 +74,6 @@ export default React.createClass({
     var height = $scatterPlot2dElement.height()
     var padding = 20
     var labelNodes = null
-    var nominalNodeLabelTextSize = 10
-    var maxNodeLabelTextSize = 20
 
     console.log(`ScatterPlot2d width=${width}, height=${height}, dataset.length=${dataset.length}`)
 
@@ -79,8 +90,8 @@ export default React.createClass({
     function zoomed() {
       container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
       if (labelNodes) {
-        var labelTextSize = nominalNodeLabelTextSize;
-        if (nominalNodeLabelTextSize*zoom.scale()>maxNodeLabelTextSize) labelTextSize = maxNodeLabelTextSize/zoom.scale();
+        var labelTextSize = self._nominalNodeLabelTextSize();
+        if (self._nominalNodeLabelTextSize()*zoom.scale()>self._maxLabelTextSize()) labelTextSize = self._maxLabelTextSize()/zoom.scale();
         console.log("Setting labelTextSize (onZoom)", labelTextSize)
         labelNodes.style("font-size", labelTextSize + "px");
       }
@@ -215,8 +226,8 @@ export default React.createClass({
          labelNodes = container.selectAll("text.node-label")
            .data(dataset)
 
-         var labelTextSize = nominalNodeLabelTextSize;
-         if (nominalNodeLabelTextSize*zoom.scale()>maxNodeLabelTextSize) labelTextSize = maxNodeLabelTextSize/zoom.scale();
+         var labelTextSize = this._nominalNodeLabelTextSize();
+         if (this._nominalNodeLabelTextSize()*zoom.scale()>this._maxLabelTextSize()) labelTextSize = this._maxLabelTextSize()/zoom.scale();
          console.log("Setting labelTextSize", labelTextSize)
          labelNodes.style("font-size", labelTextSize + "px");
 
