@@ -2,6 +2,7 @@
 # Todo
 
 - Fix up labels
+- Fix up logo
 - Enable JS Lint
 - Add requirements.txt for pip
 - Add documentation

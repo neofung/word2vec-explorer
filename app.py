@@ -36,10 +36,9 @@ class ApiController(object):
         queries = kw.pop('queries[]', [])
         try:
             result = self.model.compare(queries, limit=int(limit))
-            print('result', result)
             return {'result': result}
         except KeyError:
-            return {'error': {'message': 'No vector found for ' + query}}
+            return {'error': {'message': 'No vector found for {}'.format(queries)}}
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

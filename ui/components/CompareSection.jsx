@@ -9,8 +9,8 @@ export default React.createClass({
         error: null,
         loading: false,
         data: null,
-        queryA: 'buying|VERB',
-        queryB: 'selling|VERB'
+        queryA: '',
+        queryB: ''
       }
     },
     componentDidMount() {
@@ -21,9 +21,10 @@ export default React.createClass({
       const result = this.state.result
       const queryA = this.state.queryA
       const queryB = this.state.queryB
+      const axesLabels = this._axesLabels(queryA, queryB)
       return (
         <div className="row">
-          <div className="query-column col-md-2">
+          <div className="query-column col-md-3">
             <div className="filters">
               <form className="form" onSubmit={this._onCompareSubmit}>
                 <div className="form-group">
@@ -41,19 +42,19 @@ export default React.createClass({
             </div>
           </div>
           <div className="result comparison">
-            <div className="center-pane col-md-10">
+            <div className="center-pane col-md-9">
               { result && (
-                <ScatterPlot2d ref="plot" labels={result.labels} points={result.comparison} axes={[queryA, queryB]} showLabels={true}></ScatterPlot2d>
+                <ScatterPlot2d ref="plot" labels={result.labels} points={result.comparison} axes={axesLabels} showLabels={true}></ScatterPlot2d>
               )}
             </div>
           </div>
         </div>
       )
     },
-    compare() {
+    compare(queryA, queryB) {
       this.setState({loading: true, error: null})
       Api.request('GET', '/compare', {
-        queries: [this.state.queryA, this.state.queryB],
+        queries: [queryA, queryB],
         limit: 30
       }, (error, result) => {
         let loading = false
@@ -65,6 +66,9 @@ export default React.createClass({
       var queryA = this.refs.queryAInput.value
       var queryB = this.refs.queryBInput.value
       this.setState({queryA, queryB})
-      this.compare()
+      this.compare(queryA, queryB)
     },
+    _axesLabels(queryA, queryB) {
+      return [queryA.split(' AND ')[0], queryB.split(' AND ')[0]]
+    }
 });
