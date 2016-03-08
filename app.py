@@ -48,9 +48,7 @@ class ApiController(object):
 
 class AppController(object):
     @cherrypy.expose
-    def index(self):
-        return serve_file(STATIC_DIR + '/index.html', "text/html")
-    def view(self, id):
+    def index(self, **kw):
         return serve_file(STATIC_DIR + '/index.html', "text/html")
 
 if __name__ == '__main__':
@@ -59,7 +57,7 @@ if __name__ == '__main__':
     app_controller = AppController()
     dispatch = cherrypy.dispatch.RoutesDispatcher()
     dispatch.connect('api', '/api/:action', controller=api_controller)
-    dispatch.connect('app', '/:id', controller=app_controller, action="view")
+    dispatch.connect('app', '/:id', controller=app_controller, action="index")
     dispatch.connect('app', '/', controller=app_controller, action="index")
     app = cherrypy.tree.mount(None, config={
             '/': {

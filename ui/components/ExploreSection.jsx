@@ -4,9 +4,10 @@ const Exploration = require('./Exploration')
 
 export default React.createClass({
   getInitialState() {
+    let { query } = this.props.location
     return {
       params: {
-        query: "",
+        query: query ? query.query : '',
         limit: 1000,
         num_clusters: 30
       }
@@ -17,6 +18,7 @@ export default React.createClass({
     $('.navbar-nav li.explore').addClass('active')
   },
   render() {
+    console.log('this.props.params.query', this.props.params.query)
     return (
       <div className="row">
         <div className="query-column col-md-2">
@@ -40,7 +42,7 @@ export default React.createClass({
             </form>
           </div>
         </div>
-        <Exploration ref="exploration" params={this.state.params} onDrillOut={this._onDrillOut}></Exploration>
+        <Exploration ref="exploration" filter={this.state.params} onDrillOut={this._onDrillOut}></Exploration>
       </div>
     )
   },
@@ -53,6 +55,7 @@ export default React.createClass({
     params.query = query
     params.limit = limit
     params.num_clusters = numClusters
+    this.props.history.pushState(null, "/explore", {query: query})
     this.setState({params})
     this.refs.exploration.setState({params})
     this.refs.exploration.explore()

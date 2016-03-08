@@ -1,5 +1,6 @@
 
 const React = require('react')
+const ReactDOM = require('react-dom')
 const Api = require('./../utils/Api')
 const ScatterPlot2d = require('./ScatterPlot2d')
 
@@ -52,7 +53,7 @@ export default React.createClass({
       )
     },
     compare(queryA, queryB) {
-      this.setState({loading: true, error: null})
+      this.setState({loading: true, error: null, result: null})
       Api.request('GET', '/compare', {
         queries: [queryA, queryB],
         limit: 30

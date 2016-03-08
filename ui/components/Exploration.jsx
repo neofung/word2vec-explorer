@@ -10,7 +10,7 @@ const d3 = require('d3')
 export default React.createClass({
   getInitialState() {
     return {
-      params: this.props.params,
+      params: this.props.filter,
       loading: false,
       result: null,
       error: null,
@@ -24,6 +24,9 @@ export default React.createClass({
   },
   render() {
     let result = this.state.result
+    let vectorListTitle = "Most Similar"
+    let params = this.state.params
+    if (params && !params.query) vectorListTitle = "Sample Rated"
     return (
       <div className="exploration">
         { (this.state.error) && (
@@ -42,7 +45,7 @@ export default React.createClass({
             </div>
             <div className="col-md-2 right-pane">
               <div className="split-pane upper">
-                <VectorList ref="mostSimilarList" title="Most Similar" data={result} onSelect={this._onDrillDown}></VectorList>
+                <VectorList ref="mostSimilarList" title={vectorListTitle} data={result} onSelect={this._onDrillDown}></VectorList>
               </div>
               <div className="split-pane lower">
                 <ClusterList ref="clusterList" color={this.state.color} title="K-Means Centroids" data={result}></ClusterList>
@@ -63,7 +66,11 @@ export default React.createClass({
       num_clusters: params.num_clusters
     }, (error, result) => {
       if (result) {
-        this.refs.plot && this.refs.plot.setState({data: result})
+        this.refs.plot && this.refs.plot.setState({
+          points: result.reduction,
+          clusters: result.clusters,
+          labels: result.labels
+        })
         this.refs.mostSimilarList && this.refs.mostSimilarList.setState({selected: null})
       }
       let loading = false;
