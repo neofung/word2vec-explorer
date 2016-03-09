@@ -1,4 +1,10 @@
 
+This tool helps you visualize, query and explore Word2Vec models. Word2Vec is a deep learning technique that feeds massive amounts of text into a shallow neural net which can then be used to solve a variety of NLP and ML problems. 
+
+Word2Vec Explorer uses [Gensim](https://github.com/piskvorky/gensim) to list and compare vectors and it uses [t-SNE](https://github.com/danielfrg/tsne) to visualize a dimensional reduction of the vector space. [Scikit-Learn] is used for K-Means clustering.
+
+The UI uses [React](https://facebook.github.io/react/), [Babel](https://babeljs.io/), [Browserify](http://browserify.org/), [StandardJS](http://standardjs.com/), [D3](http://d3js.org) and [Three.js](http://threejs.org).
+
 ## Setup
 
 To install all Python depenencies:
