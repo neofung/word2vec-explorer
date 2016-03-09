@@ -8,10 +8,16 @@ from explorer import Model
 STATIC_DIR = os.path.dirname(os.path.realpath(__file__)) + '/public'
 CACHE = {}
 
+
 class ApiController(object):
+
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def explore(self, query=None, limit='1000', enable_clustering='', num_clusters='30'):
+    def explore(self,
+                query=None,
+                limit='1000',
+                enable_clustering='',
+                num_clusters='30'):
         cache_key = '-'.join([query, limit, enable_clustering, num_clusters])
         result = CACHE.get(cache_key, {})
         if len(result) > 0:
@@ -38,7 +44,8 @@ class ApiController(object):
             result = self.model.compare(queries, limit=int(limit))
             return {'result': result}
         except KeyError:
-            return {'error': {'message': 'No vector found for {}'.format(queries)}}
+            return {'error':
+                    {'message': 'No vector found for {}'.format(queries)}}
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -46,7 +53,9 @@ class ApiController(object):
         result = self.model.autocomplete(query, limit=int(limit))
         return {'result': result}
 
+
 class AppController(object):
+
     @cherrypy.expose
     def index(self, **kw):
         return serve_file(STATIC_DIR + '/index.html', "text/html")
@@ -67,4 +76,3 @@ if __name__ == '__main__':
             }
         })
     cherrypy.quickstart(app)
-    #cherrypy.quickstart(app, '/', {'/': {'tools.staticdir.on': True, 'tools.staticdir.dir': STATIC_DIR}})

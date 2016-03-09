@@ -6,6 +6,7 @@ import numpy as np
 from tsne import bh_sne
 from sklearn.cluster import KMeans
 
+
 class Exploration(dict):
 
     def __init__(self, query, labels=[], vectors=[]):
@@ -19,7 +20,8 @@ class Exploration(dict):
         self.stats = {}
 
     def reduce(self):
-        print('Performing tSNE reduction on {} vectors'.format(len(self.vectors)))
+        print('Performing tSNE reduction' +
+              'on {} vectors'.format(len(self.vectors)))
         self.reduction = bh_sne(np.array(self.vectors, dtype=np.float64))
 
     def cluster(self, num_clusters=30):
@@ -29,12 +31,16 @@ class Exploration(dict):
         clustermatrix = []
         reduction = self.reduction.tolist()
         for cluster_id in range(num_clusters):
-            clustermatrix.append([reduction[i] for i in range(len(self.vectors)) if self.clusters[i] == cluster_id])
+            clustermatrix.append([reduction[i]
+                                  for i in range(len(self.vectors))
+                                  if self.clusters[i] == cluster_id])
         self.cluster_centroids = clustering.cluster_centers_.tolist()
         self.cluster_centroids_closest_nodes = []
         for cluster_id in range(num_clusters):
             nodes_for_cluster = clustermatrix[cluster_id]
-            closest_node_to_centroid = self._closest_node(self.cluster_centroids[cluster_id], nodes_for_cluster)
+            centroid = self.cluster_centroids[cluster_id]
+            closest_node_to_centroid = self._closest_node(
+                centroid, nodes_for_cluster)
             coords = nodes_for_cluster[closest_node_to_centroid]
             node_id = reduction.index(coords)
             self.cluster_centroids_closest_nodes.append(node_id)
@@ -53,7 +59,8 @@ class Exploration(dict):
         if len(self.clusters) > 0:
             result['clusters'] = self.clusters.tolist()
             result['cluster_centroids'] = self.cluster_centroids
-            result['cluster_centroids_closest_nodes'] = self.cluster_centroids_closest_nodes
+            closest_nodes = self.cluster_centroids_closest_nodes
+            result['cluster_centroids_closest_nodes'] = closest_nodes
         return result
 
     def _closest_node(self, node, nodes):
@@ -61,26 +68,28 @@ class Exploration(dict):
         dist_2 = np.sum((nodes - node)**2, axis=1)
         return np.argmin(dist_2)
 
+
 class Model(object):
 
     def __init__(self, filename):
         try:
             self.model = gensim.models.Word2Vec.load(filename)
         except cPickle.UnpicklingError:
-            self.model = gensim.models.Word2Vec.load_word2vec_format(filename, binary=True)
-
+            load = gensim.models.Word2Vec.load_word2vec_format
+            self.model = load(filename, binary=True)
 
     def autocomplete(self, query, limit):
         words = []
         i = 0
         for word in self.model.vocab:
             if word.startswith(query):
-                words.append({'word': word, 'count': self.model.vocab[word].count})
+                words.append({
+                    'word': word,
+                    'count': self.model.vocab[word].count})
                 i += 1
 
         words = sorted(words, key=lambda x: x['count'], reverse=True)
         return words[0:limit]
-
 
     def compare(self, queries, limit):
         all_words = []
@@ -103,7 +112,6 @@ class Model(object):
 
         return {'labels': labels, 'comparison': matrix}
 
-
     def explore(self, query, limit=1000):
         print('Model#explore query={}, limit={}'.format(query, limit))
         exploration = Exploration(query)
@@ -111,7 +119,10 @@ class Model(object):
             positive, negative = self._parse_query(query)
             exploration.parsed_query['positive'] = positive
             exploration.parsed_query['negative'] = negative
-            exploration.labels, exploration.vectors, exploration.distances = self._most_similar_vectors(positive, negative, limit)
+            labels, vectors, distances = self._most_similar_vectors(positive, negative, limit)
+            exploration.labels = labels
+            exploration.vectors = vectors
+            exploration.distances = distances
         else:
             exploration.labels, exploration.vectors, sample_rate = self._all_vectors(limit)
             exploration.stats['sample_rate'] = sample_rate
@@ -120,7 +131,8 @@ class Model(object):
         return exploration
 
     def _most_similar_vectors(self, positive, negative, limit):
-        print('Model#_most_similar_vectors positive={}, negative={}, limit={}'.format(positive, negative, limit))
+        print('Model#_most_similar_vectors' +
+              'positive={}, negative={}, limit={}'.format(positive, negative, limit))
         results = self.model.most_similar(positive=positive, negative=negative, topn=limit)
         labels = []
         vectors = []
@@ -147,7 +159,8 @@ class Model(object):
         if limit > -1:
             sample = int(math.ceil(len(self.model.vocab) / limit))
         sample_rate = float(limit) / len(self.model.vocab)
-        print('Model#_most_similar_vectors sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit))
+        print('Model#_most_similar_vectors' +
+              'sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit))
         labels = []
         vectors = []
         i = 0
