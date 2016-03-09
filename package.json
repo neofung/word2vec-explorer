@@ -43,6 +43,12 @@
     "browserify": "*",
     "babelify": "*",
     "watchify": "*",
-    "uglifyjs": "*"
+    "uglifyjs": "*",
+    "standard": "*"
+  },
+  "standard": {
+    "ignore": [
+      "public/**"
+    ]
   }
 }
