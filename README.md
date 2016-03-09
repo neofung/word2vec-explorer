@@ -3,9 +3,9 @@
 
 This tool helps you visualize, query and explore Word2Vec models. Word2Vec is a deep learning technique that feeds massive amounts of text into a shallow neural net which can then be used to solve a variety of NLP and ML problems.
 
-Word2Vec Explorer uses [Gensim](https://github.com/piskvorky/gensim) to list and compare vectors and it uses [t-SNE](https://github.com/danielfrg/tsne) to visualize a dimensional reduction of the vector space. [Scikit-Learn] is used for K-Means clustering.
+Word2Vec Explorer uses [Gensim](https://github.com/piskvorky/gensim) to list and compare vectors and it uses [t-SNE](https://github.com/danielfrg/tsne) to visualize a dimensional reduction of the vector space. [Scikit-Learn](http://scikit-learn.org/stable/) is used for K-Means clustering.
 
-The UI uses [React](https://facebook.github.io/react/), [Babel](https://babeljs.io/), [Browserify](http://browserify.org/), [StandardJS](http://standardjs.com/), [D3](http://d3js.org) and [Three.js](http://threejs.org).
+The UI is built using [React](https://facebook.github.io/react/), [Babel](https://babeljs.io/), [Browserify](http://browserify.org/), [StandardJS](http://standardjs.com/), [D3](http://d3js.org) and [Three.js](http://threejs.org).
 
 ![TSNE 10K](https://raw.githubusercontent.com/dominiek/word2vec-explorer/master/public/screenshots/tsne-10k.png?token=AABIgK4MtRPmjZz5pWmdlLwlZtC8-hBqks5W6aenwA%3D%3D)
 
@@ -33,10 +33,9 @@ Now point your browser at [localhost:8080](http://localhost:8080/) to load the e
 
 ### Obtaining Pre-Trained Models
 
-The classic example of Word2Vec is the Google News model trained on 600M sentences: [GoogleNews-vectors-negative300.bin.gz](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit?usp=sharing)
+A classic example of Word2Vec is the Google News model trained on 600M sentences: [GoogleNews-vectors-negative300.bin.gz](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit?usp=sharing)
 
-Some more pre-trained models provided [here](https://github.com/3Top/word2vec-api#where-to-get-a-pretrained-models).
-
+[More pre-trained models]](https://github.com/3Top/word2vec-api#where-to-get-a-pretrained-models)
 
 ### Development
 
@@ -58,8 +57,9 @@ pep8 --max-line-length=100 *.py explore
 
 ### Todo
 
+- 3D GPU/WebGL view (on branch `3d`)
 - Make sure axes stay when zooming/panning scatterplot
 - Autocomplete in query interface
+- Look into supporting other high dimensional data models (go beyond word vectors)
 - Drill-down of vector that shows real distance between neighbors
-- 3D GPU/WebGL view (on branch `3d`)
 - Improved sample rated view that takes into account term counts and connectedness
