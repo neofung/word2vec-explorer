@@ -1,4 +1,4 @@
-/* global $ */
+/* global $, localStorage */
 
 const React = require('react')
 const d3 = require('d3')
@@ -49,7 +49,7 @@ export default React.createClass({
       showLabels: this.refs.showLabelsInput.checked
     }
     if (viewOptions.showLabels) {
-      localStorage.scatter2dShowLabels = "true"
+      localStorage.scatter2dShowLabels = 'true'
     } else {
       delete localStorage.scatter2dShowLabels
     }
