@@ -10,7 +10,7 @@ export default React.createClass({
       clusters: this.props.clusters,
       labels: this.props.labels,
       viewOptions: {
-        showLabels: this.props.showLabels || true
+        showLabels: this.props.showLabels || localStorage.scatter2dShowLabels
       }
     }
   },
@@ -47,6 +47,11 @@ export default React.createClass({
   _setViewOptions () {
     var viewOptions = {
       showLabels: this.refs.showLabelsInput.checked
+    }
+    if (viewOptions.showLabels) {
+      localStorage.scatter2dShowLabels = "true"
+    } else {
+      delete localStorage.scatter2dShowLabels
     }
     this.setState({viewOptions: viewOptions})
   },

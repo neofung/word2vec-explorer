@@ -2,9 +2,6 @@
 const React = require('react')
 
 export default React.createClass({
-  propTypes: {
-    data: React.PropTypes.element.isRequired
-  },
   render () {
     let data = this.props.data
     const format = (x) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
