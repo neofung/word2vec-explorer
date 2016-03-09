@@ -2,7 +2,6 @@
 
 # Todo
 
-- Make pep8 compliant
 - Add documentation
 - Make sure axes stay when zooming/panning scatterplot
 - Autocomplete in query interface
