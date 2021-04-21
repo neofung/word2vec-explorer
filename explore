@@ -9,6 +9,7 @@ from explorer import Model
 STATIC_DIR = os.path.dirname(os.path.realpath(__file__)) + '/public'
 CACHE = {}
 
+cherrypy.server.socket_host = '0.0.0.0'
 
 class ApiController(object):
 
