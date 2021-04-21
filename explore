@@ -66,7 +66,7 @@ if __name__ == '__main__':
         sys.stderr.write('Usage: {} <Word2Vec model file>\n'.format(sys.argv[0]))
         sys.exit()
     api_controller = ApiController()
-    api_controller.model = Model(sys.argv[1])
+    api_controller.model = Model(sys.argv[1], "fasttext")
     app_controller = AppController()
     dispatch = cherrypy.dispatch.RoutesDispatcher()
     dispatch.connect('api', '/api/:action', controller=api_controller)

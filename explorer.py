@@ -71,9 +71,14 @@ class Exploration(dict):
 
 class Model(object):
 
-    def __init__(self, filename):
+    def __init__(self, filename, model_type=None):
         try:
-            self.model = gensim.models.Word2Vec.load(filename)
+            if model_type is None:
+                self.model = gensim.models.Word2Vec.load(filename)
+            elif model_type=="fasttext":
+                # self.model = gensim.models.fasttext.load_facebook_model(filename)
+
+                self.model = gensim.models.KeyedVectors.load_word2vec_format(filename, binary=False).wv
         except cPickle.UnpicklingError:
             load = gensim.models.Word2Vec.load_word2vec_format
             self.model = load(filename, binary=True)
