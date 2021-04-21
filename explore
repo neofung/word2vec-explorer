@@ -20,11 +20,11 @@ class ApiController(object):
                 limit='1000',
                 enable_clustering='',
                 num_clusters='30'):
-        query = query.encode("utf-8")
-        limit = limit.encode('utf-8')
-        enable_clustering = enable_clustering.encode('utf-8')
-        num_clusters = num_clusters.encode('utf-8')
-        print [query, limit, enable_clustering, num_clusters]
+        # query = query.encode("utf-8")
+        # limit = limit.encode('utf-8')
+        # enable_clustering = enable_clustering.encode('utf-8')
+        # num_clusters = num_clusters.encode('utf-8')
+        print([query, limit, enable_clustering, num_clusters])
         cache_key = '-'.join([query, limit, enable_clustering, num_clusters])
         result = CACHE.get(cache_key, {})
         if len(result) > 0:

@@ -1,4 +1,5 @@
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - ca-certificates=2021.4.13
@@ -9,12 +10,14 @@ dependencies:
   - libstdcxx-ng=9.1.0
   - ncurses=6.2
   - openssl=1.1.1k
-  - python=2.7.17
+  - python=3.6.10
+  - python_abi=3.6
   - readline=7.0
   - setuptools=36.4.0
   - sqlite=3.31.1
   - tk=8.6.8
   - wheel=0.29.0
+  - xz=5.2.5
   - zlib=1.2.11
   - pip:
     - backports-functools-lru-cache==1.6.4
@@ -31,9 +34,9 @@ dependencies:
     - crypto==1.4.1
     - cython==0.23.4
     - enum34==1.1.10
+    - ez-setup==0.9
     - git+https://github.com/facebookresearch/fastText.git
     - funcsigs==1.0.2
-    - futures==3.3.0
     - gensim==3.8.3
     - html5lib==0.9999999
     - idna==2.10
@@ -45,8 +48,7 @@ dependencies:
     - naked==0.1.31
     - numpy==1.16.1
     - pandas==0.24.2
-    - pdfminer==20140328
-    - pip==20.3.4
+    - pip==21.0.1
     - portend==2.6
     - protobuf==3.12.2
     - pybind11==2.6.2
@@ -67,7 +69,6 @@ dependencies:
     - smart-open==1.10.1
     - tempora==1.14.1
     - tqdm==4.47.0
-    - tsne==0.1.5
     - urllib3==1.25.9
     - werkzeug==1.0.1
     - xlrd==1.2.0

@@ -1,9 +1,9 @@
 
 import math
 import gensim
-import cPickle
+import pickle
 import numpy as np
-from tsne import bh_sne
+from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 
 
@@ -20,9 +20,9 @@ class Exploration(dict):
         self.stats = {}
 
     def reduce(self):
-        print('Performing tSNE reduction' +
-              'on {} vectors'.format(len(self.vectors)))
-        self.reduction = bh_sne(np.array(self.vectors, dtype=np.float64))
+        print(('Performing tSNE reduction' +
+              'on {} vectors'.format(len(self.vectors))))
+        self.reduction = TSNE(n_components=2).fit_transform(np.array(self.vectors, dtype=np.float64))
 
     def cluster(self, num_clusters=30):
         clustering = KMeans(n_clusters=num_clusters)
@@ -79,7 +79,7 @@ class Model(object):
                 # self.model = gensim.models.fasttext.load_facebook_model(filename)
 
                 self.model = gensim.models.KeyedVectors.load_word2vec_format(filename, binary=False).wv
-        except cPickle.UnpicklingError:
+        except pickle.UnpicklingError:
             load = gensim.models.Word2Vec.load_word2vec_format
             self.model = load(filename, binary=True)
 
@@ -118,7 +118,7 @@ class Model(object):
         return {'labels': labels, 'comparison': matrix}
 
     def explore(self, query, limit=1000):
-        print('Model#explore query={}, limit={}'.format(query, limit))
+        print(('Model#explore query={}, limit={}'.format(query, limit)))
         exploration = Exploration(query)
         if len(query):
             positive, negative = self._parse_query(query)
@@ -136,8 +136,8 @@ class Model(object):
         return exploration
 
     def _most_similar_vectors(self, positive, negative, limit):
-        print('Model#_most_similar_vectors: ' +
-              'positive={}, negative={}, limit={}'.format(positive, negative, limit))
+        print(('Model#_most_similar_vectors: ' +
+              'positive={}, negative={}, limit={}'.format(positive, negative, limit)))
         results = self.model.most_similar(positive=positive, negative=negative, topn=limit)
         labels = []
         vectors = []
@@ -156,7 +156,7 @@ class Model(object):
             if expression.startswith('NOT '):
                 negative.append(expression[4:])
             else:
-                positive.append(expression.decode('utf-8'))
+                positive.append(expression)
         return positive, negative
 
     def _all_vectors(self, limit):
@@ -164,8 +164,8 @@ class Model(object):
         if limit > -1:
             sample = int(math.ceil(len(self.model.vocab) / limit))
         sample_rate = float(limit) / len(self.model.vocab)
-        print('Model#_most_similar_vectors ' +
-              'sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit))
+        print(('Model#_most_similar_vectors ' +
+              'sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit)))
         labels = []
         vectors = []
         i = 0
