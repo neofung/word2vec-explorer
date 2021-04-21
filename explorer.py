@@ -136,7 +136,7 @@ class Model(object):
         return exploration
 
     def _most_similar_vectors(self, positive, negative, limit):
-        print('Model#_most_similar_vectors' +
+        print('Model#_most_similar_vectors: ' +
               'positive={}, negative={}, limit={}'.format(positive, negative, limit))
         results = self.model.most_similar(positive=positive, negative=negative, topn=limit)
         labels = []
@@ -156,7 +156,7 @@ class Model(object):
             if expression.startswith('NOT '):
                 negative.append(expression[4:])
             else:
-                positive.append(expression)
+                positive.append(expression.decode('utf-8'))
         return positive, negative
 
     def _all_vectors(self, limit):
@@ -164,7 +164,7 @@ class Model(object):
         if limit > -1:
             sample = int(math.ceil(len(self.model.vocab) / limit))
         sample_rate = float(limit) / len(self.model.vocab)
-        print('Model#_most_similar_vectors' +
+        print('Model#_most_similar_vectors ' +
               'sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit))
         labels = []
         vectors = []
